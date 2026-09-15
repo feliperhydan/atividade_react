@@ -109,3 +109,17 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+.tarefa {
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+}
+
+.tarefa.concluida {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.tarefa.pendente {
+    font-weight: bold;
+}

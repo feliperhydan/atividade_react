@@ -1,45 +1,40 @@
-// Componente visual de uma tarefa individual.
+// Representa visualmente uma única tarefa recebida pela lista.
 export default function Tarefa({
-    // Objeto com id, título, descrição e status da tarefa.
+    // Objeto com os dados da tarefa.
     tarefa,
-    // Função recebida do App para alternar o status.
+    // Funções recebidas do App para solicitar alterações.
     alternarTarefa,
-    // Função recebida do App para excluir a tarefa.
     excluirTarefa
 }) {
     return (
-        // Aplica uma classe diferente conforme a tarefa esteja concluída ou pendente.
         <div
+            // className usa uma expressão condicional para mudar a aparência do item.
             className={
                 tarefa.concluida
-                    // Tarefa concluída recebe as classes tarefa e concluida.
                     ? "tarefa concluida"
-                    // Tarefa pendente recebe as classes tarefa e pendente.
                     : "tarefa pendente"
             }
         >
-            {/* Renderiza o título armazenado no objeto da tarefa. */}
+            {/* As chaves inserem no JSX os valores vindos do objeto tarefa. */}
             <h2>{tarefa.titulo}</h2>
-
-            {/* Renderiza a descrição armazenada no objeto da tarefa. */}
             <p>{tarefa.descricao}</p>
 
-            {/* Exibe um texto de status conforme o valor booleano concluida. */}
+            {/* O ternário mostra um texto diferente para cada estado. */}
             <p>
                 {tarefa.concluida
                     ? "Concluída"
                     : "Pendente"}
             </p>
 
-            {/* Envia o id da tarefa para o App alternar o status correto. */}
+            {/* A arrow function espera o clique para chamar a função. Sem ela,
+                alternarTarefa(tarefa.id) seria executada durante a renderização. */}
             <button onClick={() => alternarTarefa(tarefa.id)}>
-                {/* O texto muda para indicar a próxima ação possível. */}
                 {tarefa.concluida
                     ? "Reabrir"
                     : "Concluir"}
             </button>
 
-            {/* Envia o id da tarefa para o App removê-la da lista. */}
+            {/* O id identifica exatamente qual tarefa deve ser removida. */}
             <button onClick={() => excluirTarefa(tarefa.id)}>
                 Excluir
             </button>

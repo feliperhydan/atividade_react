@@ -1,15 +1,14 @@
-// Componente de apresentação que recebe os totais por props.
+// Componente de apresentação: ele não possui estado nem regras de negócio.
+// Apenas recebe valores do App e os mostra na tela.
 export default function Resumo({
-    // Quantidade de todas as tarefas.
+    // Desestruturar as props cria variáveis locais com estes nomes.
     total,
-    // Quantidade de tarefas marcadas como concluídas.
     concluidas,
-    // Quantidade de tarefas que ainda estão pendentes.
     pendentes
 }) {
     return (
-        // Exibe os três valores calculados no componente App.
         <p>
+            {/* As chaves permitem inserir valores JavaScript dentro do JSX. */}
             Total: {total} | Concluídas: {concluidas} | Pendentes: {pendentes}
         </p>
     );

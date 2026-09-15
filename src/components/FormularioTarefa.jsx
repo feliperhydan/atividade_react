@@ -1,87 +1,80 @@
-// Importa o Hook usado para controlar o conteúdo dos campos do formulário.
+// useState permite transformar os campos em "campos controlados": o valor exibido
+// pelo input sempre vem do estado do React.
 import { useState } from "react";
 
-// Componente que coleta os dados de uma nova tarefa.
+// Componente responsável por coletar os dados e solicitar o cadastro de uma tarefa.
 export default function FormularioTarefa({ adicionarTarefa }) {
-
-    // Cria o estado do título, iniciado como texto vazio.
+    // titulo é o valor atual do campo; setTitulo é a função para atualizá-lo.
     const [titulo, setTitulo] = useState("");
-    // Cria o estado da descrição, também iniciado como texto vazio.
+    // O mesmo padrão é usado para controlar o campo de descrição.
     const [descricao, setDescricao] = useState("");
 
-    // Executa a lógica de cadastro quando o formulário é enviado.
+    // Esta função é executada pelo evento onSubmit do formulário.
     function handleSubmit(event) {
-        // Impede o navegador de recarregar a página ao enviar o formulário.
+        // O comportamento padrão de um form é recarregar a página. Em uma SPA,
+        // impedimos isso para continuar no React.
         event.preventDefault();
-        // Monta o objeto com o formato esperado pelo restante da aplicação.
+
+        // Criamos um objeto com o mesmo formato usado em toda a aplicação.
         const novaTarefa = {
-            // Usa o horário atual como identificador da tarefa.
+            // O id identifica esta tarefa quando ela é alterada, excluída ou listada.
             id: Date.now(),
-            // Copia para o objeto o título digitado pelo usuário.
-            titulo: titulo,
-            // Copia para o objeto a descrição digitada pelo usuário.
-            descricao: descricao,
-            // Toda tarefa nova começa como pendente.
+            // A forma abreviada titulo: titulo poderia ser apenas titulo.
+            titulo,
+            descricao,
+            // Uma tarefa recém-criada ainda não foi concluída.
             concluida: false
         };
 
-        // Chama a função recebida do App para adicionar a tarefa ao estado principal.
+        // adicionarTarefa veio do App por props. O formulário não altera diretamente
+        // o estado principal: ele envia a nova tarefa para o componente pai.
         adicionarTarefa(novaTarefa);
 
-        // Limpa o campo de título depois do cadastro.
+        // Como os campos são controlados, limpar o estado também limpa os campos.
         setTitulo("");
-        // Limpa o campo de descrição depois do cadastro.
         setDescricao("");
     }
 
     return (
         <div>
-            {/* Título da seção de cadastro. */}
             <h1>Adicionar tarefa</h1>
 
-            {/* Formulário que chama handleSubmit no envio. */}
+            {/* onSubmit liga o envio do HTML à função handleSubmit do React. */}
             <form onSubmit={handleSubmit}>
-
-                {/* Label associado ao input pelo mesmo id. */}
+                {/* htmlFor conecta o texto do label ao input que possui id="nome". */}
                 <label htmlFor="nome">
                     Nome da tarefa:
                 </label>
-                {/* Quebra de linha visual após o label. */}
                 <br />
-                {/* Campo controlado: seu valor vem do estado titulo. */}
+
+                {/* value mostra o estado atual e onChange atualiza esse estado. */}
                 <input
                     type="text"
                     id="nome"
                     value={titulo}
-                    // Atualiza o estado a cada alteração feita no campo.
                     onChange={(event) => setTitulo(event.target.value)}
                 />
 
-                {/* Espaçamento visual entre os campos. */}
                 <br /><br />
 
-                {/* Label associado ao campo de descrição. */}
                 <label htmlFor="descricao">
                     Descrição:
                 </label>
-                {/* Quebra de linha visual após o label. */}
                 <br />
-                {/* Campo controlado que recebe uma descrição com várias linhas. */}
+
+                {/* textarea funciona como o input, mas aceita várias linhas. */}
                 <textarea
                     id="descricao"
                     value={descricao}
-                    // Atualiza o estado a cada alteração feita na descrição.
                     onChange={(event) => setDescricao(event.target.value)}
                 />
 
-                {/* Espaçamento visual antes do botão. */}
                 <br /><br />
 
-                {/* Botão submit, responsável por disparar o envio do formulário. */}
+                {/* type="submit" faz o form disparar o evento onSubmit. */}
                 <button type="submit">
                     Adicionar tarefa
                 </button>
-
             </form>
         </div>
     );

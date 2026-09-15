@@ -1,113 +1,114 @@
-// Importa o Hook que permite criar e atualizar estados dentro de um componente funcional.
+// useState permite que o componente guarde valores que mudam durante o uso da aplicação.
 import { useState } from "react";
-// Importa o formulário responsável por cadastrar novas tarefas.
+// Estes componentes são partes menores da tela principal.
 import FormularioTarefa from "./components/FormularioTarefa";
-// Importa o componente que exibe a coleção de tarefas.
 import ListaTarefas from "./components/ListaTarefas";
-// Importa o componente que mostra as quantidades totalizadas.
 import Resumo from "./components/Resumo";
 
-// Componente principal: concentra o estado e as regras da aplicação.
+// App é o componente pai. Ele concentra os dados e as regras para que os filhos
+// apenas exibam informações ou avisem quando o usuário realiza alguma ação.
 export default function App() {
-    // Guarda todas as tarefas cadastradas; a lista começa vazia.
+    // O primeiro item retornado é o valor atual; o segundo é a função que o altera.
+    // O estado começa como um array vazio porque ainda não há tarefas cadastradas.
     const [tarefas, setTarefas] = useState([]);
-    // Guarda o filtro ativo e começa mostrando todas as tarefas.
+    // Guarda qual filtro está selecionado. Alterar este estado faz o React renderizar
+    // novamente o componente e atualizar a lista exibida.
     const [filtro, setFiltro] = useState("todas");
 
-    // Recebe uma nova tarefa criada pelo formulário.
+    // Esta função é enviada ao formulário por props. Assim, o formulário consegue
+    // comunicar ao App que uma nova tarefa foi criada.
     function adicionarTarefa(tarefa) {
-        // Cria um novo array com as tarefas antigas e acrescenta a nova no final.
+        // Não alteramos diretamente o array antigo. Criamos um novo array com o
+        // operador spread (...) e adicionamos a nova tarefa no final.
         setTarefas([...tarefas, tarefa]);
     }
 
-    // Alterna o status de conclusão da tarefa identificada pelo id recebido.
+    // Recebe o id da tarefa clicada e alterna entre pendente e concluída.
     function alternarTarefa(id) {
-        // Percorre as tarefas para produzir uma nova lista sem alterar a original.
+        // map cria um novo array mantendo a mesma quantidade de itens.
         setTarefas(
             tarefas.map((tarefa) =>
-                // Se o id corresponder, cria uma cópia invertendo concluida.
+                // Para a tarefa clicada, criamos uma cópia com ...tarefa e trocamos
+                // apenas o campo concluida. As outras tarefas continuam iguais.
                 tarefa.id === id
                     ? {
                         ...tarefa,
                         concluida: !tarefa.concluida
                     }
-                    // Se não corresponder, mantém a tarefa como está.
                     : tarefa
             )
         );
     }
 
-    // Exclui da lista a tarefa cujo id foi recebido.
+    // Recebe o id da tarefa que deve ser removida da lista.
     function excluirTarefa(id) {
-        // filter mantém somente as tarefas com id diferente do id selecionado.
+        // filter cria outro array contendo somente as tarefas que não possuem
+        // o id clicado. O item com esse id deixa de aparecer na tela.
         setTarefas(
             tarefas.filter((tarefa) => tarefa.id !== id)
         );
     }
 
-    // Calcula o número total de tarefas cadastradas.
+    // Estes valores são derivados do estado: não precisam de outro useState,
+    // pois podem ser calculados sempre que o componente for renderizado.
     const total = tarefas.length;
-
-    // Filtra as tarefas concluídas e conta quantas existem.
+    // filter seleciona as concluídas; length informa quantas foram encontradas.
     const concluidas = tarefas.filter(
         (tarefa) => tarefa.concluida
     ).length;
-
-    // Filtra as tarefas ainda pendentes e conta quantas existem.
+    // O sinal ! significa "não": aqui contamos as tarefas não concluídas.
     const pendentes = tarefas.filter(
         (tarefa) => !tarefa.concluida
     ).length;
 
-    // Seleciona somente as tarefas que devem aparecer conforme o filtro atual.
+    // Cria a versão da lista que será enviada para ListaTarefas.
     const tarefasFiltradas = tarefas.filter((tarefa) => {
-        // No filtro pendentes, retorna apenas tarefas não concluídas.
+        // A função passada ao filter precisa retornar true para manter o item.
         if (filtro === "pendentes") {
             return !tarefa.concluida;
         }
 
-        // No filtro concluidas, retorna apenas tarefas concluídas.
         if (filtro === "concluidas") {
             return tarefa.concluida;
         }
 
-        // No filtro todas, retorna qualquer tarefa.
+        // No filtro "todas", true mantém todas as tarefas.
         return true;
     });
 
-    // Retorna a interface que será renderizada dentro do elemento root.
+    // JSX descreve a interface. Os valores e funções entre chaves são JavaScript.
     return (
         <div>
-            {/* Envia a função de cadastro para o componente filho por props. */}
+            {/* Props são informações passadas do componente pai para o filho. */}
             <FormularioTarefa
                 adicionarTarefa={adicionarTarefa}
             />
 
-            {/* Envia os três números calculados para o componente de resumo. */}
+            {/* O Resumo recebe números prontos e apenas os apresenta. */}
             <Resumo
                 total={total}
                 concluidas={concluidas}
                 pendentes={pendentes}
             />
 
-            {/* Agrupa os botões que alteram o filtro armazenado no estado. */}
+            {/* Cada botão chama setFiltro e, com isso, muda a lista filtrada. */}
             <div>
-                {/* Mostra todas as tarefas quando clicado. */}
                 <button onClick={() => setFiltro("todas")}>
                     Todas
                 </button>
 
-                {/* Mostra somente tarefas pendentes quando clicado. */}
                 <button onClick={() => setFiltro("pendentes")}>
                     Pendentes
                 </button>
 
-                {/* Mostra somente tarefas concluídas quando clicado. */}
                 <button onClick={() => setFiltro("concluidas")}>
                     Concluídas
                 </button>
             </div>
 
-            {/* Passa a lista filtrada e as ações para o componente de listagem. */}
+            {/* ListaTarefas recebe os dados e também as funções que os itens poderão
+                executar. Isso é elevação de estado: o estado fica no pai, mas os
+                filhos recebem o que precisam através de props. */}
             <ListaTarefas
                 tarefas={tarefasFiltradas}
                 alternarTarefa={alternarTarefa}
